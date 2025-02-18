@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>AHP APP Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+    />
+    <style>
+      /* Layout styling */
+      body, html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      .sidebar {
+        background-color: #0d6efd; /* Biru ala Bootstrap */
+        color: #fff;
+        height: 100vh;
+        padding: 20px;
+      }
+      .sidebar a {
+        text-decoration: none;
+        color: #fff;
+        display: block;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        padding: 8px;
+      }
+      .sidebar a:hover,
+      .active-menu {
+        background-color: #084298;
+      }
+      .content-area {
+        background-color: #f8f9fa;
+        height: 100vh;
+        overflow-y: auto;
+        padding: 20px;
+      }
+      .page {
+        display: none;
+      }
+      .page.active {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="row g-0">
+      <!-- SIDEBAR -->
+      <div class="col-2 sidebar d-flex flex-column">
+        <h5 class="fw-bold text-center">AHP APP</h5>
+        <div
+          class="w-50 mt-3 rounded overflow-hidden"
+          style="margin: auto; height: 150px;"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=1974&auto=format&fit=crop"
+            class="w-100"
+            style="transform: translateY(-30px);"
+            alt="User Image"
+          />
+        </div>
+        <h6 class="text-center fw-bold mt-3">Persone One</h6>
+        <small class="text-center d-block">16022025</small>
+        <hr class="my-3" />
+        <div id="menuList" class="flex-grow-1">
+          <a href="#" data-page="bonusPage" class="menu-link"
+            ><i class="bi bi-coin me-2"></i>Halaman Bonus</a
+          >
+          <a href="#" data-page="konditePage" class="menu-link"
+            ><i class="bi bi-exclamation-circle me-2"></i>Kondite</a
+          >
+          <a href="#" data-page="kalibrasiPage" class="menu-link"
+            ><i class="bi bi-sliders me-2"></i>Kalibrasi</a
+          >
+          <hr class="text-white" />
+          <small>Input</small>
+          <a href="#" data-page="inputKPIPage" class="menu-link"
+            ><i class="bi bi-journal-plus me-2"></i>Input KPI</a
+          >
+          <a href="#" data-page="inputPenilaianPage" class="menu-link"
+            ><i class="bi bi-pencil-square me-2"></i>Input Penilaian KPI</a
+          >
+          <hr class="text-white" />
+          <small>Master</small>
+          <!-- Ubah nama menu KPI jadi EYN atau tetap KPI -->
+          <a href="#" data-page="masterKPIPage" class="menu-link"
+            ><i class="bi bi-card-checklist me-2"></i>KPI</a
+          >
+          <a href="#" data-page="masterPengurangPage" class="menu-link"
+            ><i class="bi bi-file-earmark-minus me-2"></i>Pengurang Poin</a
+          >
+          <a href="#" data-page="masterPenambahPage" class="menu-link"
+            ><i class="bi bi-file-earmark-plus me-2"></i>Penambah Poin</a
+          >
+          <a href="#" data-page="masterSettingKPIPage" class="menu-link"
+            ><i class="bi bi-gear-fill me-2"></i>Setting KPI</a
+          >
+        </div>
+        <button id="logoutBtn" class="btn btn-outline-light w-100 mt-3">
+          Logout
+        </button>
+      </div>
+
+      <!-- CONTENT AREA -->
+      <div class="col-10 content-area">
+        <!-- Halaman Bonus -->
+        <div id="bonusPage" class="page">
+          <h3>Halaman Bonus</h3>
+          <p>Di sini Anda dapat melihat akumulasi bonus dan mengekspor ke Excel.</p>
+          <button class="btn btn-success mb-3" id="exportExcelBtn">
+            Export Excel
+          </button>
+          <button class="btn btn-primary mb-3" id="calculateBonusBtn">
+            Hitung Bonus
+          </button>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th>No</th>
+                  <th>Employee ID</th>
+                  <th>Nama</th>
+                  <th>Tahun</th>
+                  <th>Total Score</th>
+                  <th>Bonus</th>
+                </tr>
+              </thead>
+              <tbody id="bonusTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Halaman Kondite -->
+        <div id="konditePage" class="page">
+          <h3>Kondite</h3>
+          <p>Form input kondite karyawan (misal: Surat Peringatan).</p>
+          <form id="konditeForm">
+            <div class="mb-3">
+              <label class="form-label">Nama Karyawan</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Misal: Anggi"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Kategori Kondite</label>
+              <select class="form-select" required>
+                <option value="">- Pilih -</option>
+                <option value="SP1">Surat Peringatan 1</option>
+                <option value="SP2">Surat Peringatan 2</option>
+                <option value="SP3">Surat Peringatan 3</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Masa Berlaku</label>
+              <input type="date" class="form-control" required />
+            </div>
+            <button class="btn btn-primary" type="submit">Simpan Kondite</button>
+          </form>
+        </div>
+
+        <!-- Halaman Kalibrasi -->
+        <div id="kalibrasiPage" class="page">
+          <h3>Kalibrasi</h3>
+          <p>
+            Menampilkan nilai KPI yang telah disesuaikan dengan pengurang dan
+            penambah poin. Hasil akhir akan dikategorikan:
+            <br />
+            &lt;2 = Poor, 2 - &lt;3 = Fair, 3 - &lt;4 = Good, 4 - &lt;5 =
+            Outstanding, 5 = Exceptional.
+          </p>
+        </div>
+
+        <!-- Halaman Input KPI -->
+        <div id="inputKPIPage" class="page">
+          <h3>Input KPI</h3>
+          <p>Tambah kategori KPI, bobot, target, dan skala penilaian.</p>
+          <form id="inputKPIForm">
+            <div class="mb-3">
+              <label class="form-label">Kategori KPI</label>
+              <select class="form-select" id="kpiCategory" required>
+                <option value="">- Pilih -</option>
+                <option value="Individu">KPI Individu</option>
+                <option value="Departemen">KPI Departemen</option>
+                <option value="Perusahaan">KPI Perusahaan</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Nama KPI</label>
+              <input
+                type="text"
+                class="form-control"
+                id="kpiTitle"
+                placeholder="Contoh: Target Penjualan"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Bobot KPI (%)</label>
+              <input
+                type="number"
+                class="form-control"
+                id="kpiWeight"
+                placeholder="Contoh: 20"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Target KPI</label>
+              <input
+                type="text"
+                class="form-control"
+                id="kpiTarget"
+                placeholder="Contoh: 100 Juta"
+                required
+              />
+            </div>
+            <!-- Skala Penilaian -->
+            <div class="row">
+              <div class="col">
+                <label class="form-label">Poor</label>
+                <input type="text" class="form-control" required />
+              </div>
+              <div class="col">
+                <label class="form-label">Fair</label>
+                <input type="text" class="form-control" required />
+              </div>
+              <div class="col">
+                <label class="form-label">Good</label>
+                <input type="text" class="form-control" required />
+              </div>
+              <div class="col">
+                <label class="form-label">Outstanding</label>
+                <input type="text" class="form-control" required />
+              </div>
+              <div class="col">
+                <label class="form-label">Exceptional</label>
+                <input type="text" class="form-control" required />
+              </div>
+            </div>
+            <button class="btn btn-primary mt-3" type="submit">Simpan KPI</button>
+          </form>
+        </div>
+
+        <!-- Halaman Input Penilaian KPI -->
+        <div id="inputPenilaianPage" class="page">
+          <h3>Input Penilaian KPI</h3>
+          <p>Masukkan pencapaian KPI oleh karyawan.</p>
+          <form id="penilaianKPIForm">
+            <div class="mb-3">
+              <label class="form-label">Pilih Karyawan</label>
+              <select class="form-select" id="selectEmployee" required>
+                <option value="">- Pilih -</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Pilih KPI</label>
+              <select class="form-select" id="selectKPI" required>
+                <option value="">- Pilih -</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Hasil Pencapaian</label>
+              <input
+                type="text"
+                class="form-control"
+                id="achievementField"
+                placeholder="Contoh: 80 Juta"
+                required
+              />
+            </div>
+            <button class="btn btn-primary" type="submit">Simpan Penilaian</button>
+          </form>
+        </div>
+
+        <!-- Halaman Master Pengurang Poin -->
+        <div id="masterPengurangPage" class="page">
+          <h3>Master Pengurang Poin</h3>
+          <p>Contoh: SP1 (1.25), SP2 (1.5), SP3 (2), dll.</p>
+        </div>
+
+        <!-- Halaman Master Penambah Poin -->
+        <div id="masterPenambahPage" class="page">
+          <h3>Master Penambah Poin</h3>
+          <p>Contoh: Penghargaan BOD (0.25), Project di luar KPI (0.15), dsb.</p>
+        </div>
+
+        <!-- Halaman Master Setting KPI -->
+        <div id="masterSettingKPIPage" class="page">
+          <h3>Master Setting KPI</h3>
+          <p>KPI Individu, KPI Departemen, KPI Perusahaan harus total 100%.</p>
+        </div>
+
+        <!-- Halaman Master KPI -->
+        <div id="masterKPIPage" class="page">
+          <h3>Master KPI</h3>
+          <p>Daftar KPI di sistem (CRUD).</p>
+          <button class="btn btn-primary mb-3" id="loadKPIBtn">Load KPI</button>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <!-- Kolom2 hasil parsing description -->
+                  <th>Category</th>
+                  <th>Bobot</th>
+                  <th>Target</th>
+                  <th>Poor</th>
+                  <th>Fair</th>
+                  <th>Good</th>
+                  <th>Outstanding</th>
+                  <th>Exceptional</th>
+                  <!-- Kolom existing -->
+                  <th>Score</th>
+                  <th>Validated</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="kpiTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS & Axios -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      // Pastikan user sudah login
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = 'index.html';
+      }
+
+      // Logout
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        localStorage.removeItem('token');
+        window.location.href = 'index.html';
+      });
+
+      // Menu navigation
+      const menuLinks = document.querySelectorAll('.menu-link');
+      const pages = document.querySelectorAll('.page');
+      menuLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          // Hapus active-menu dari semua link
+          menuLinks.forEach(lnk => lnk.classList.remove('active-menu'));
+          // Tambah active-menu ke link yang diklik
+          link.classList.add('active-menu');
+
+          const pageId = link.getAttribute('data-page');
+          pages.forEach(pg => {
+            pg.classList.remove('active');
+            if (pg.id === pageId) pg.classList.add('active');
+          });
+        });
+      });
+      // Tampilkan halaman Bonus sebagai default
+      document.querySelector('[data-page="bonusPage"]').click();
+
+      // ---------------------------------------------------------------------------------
+      // BONUS
+      // ---------------------------------------------------------------------------------
+      document.getElementById('calculateBonusBtn').addEventListener('click', async () => {
+        try {
+          const payload = {
+            criteria_weights: { "KPI": 1 } // contoh bobot
+          };
+          const res = await axios.post('http://localhost:8080/api/bonus/calculate', payload, {
+            headers: { Authorization: 'Bearer ' + token }
+          });
+          const bonusData = res.data.data;
+          const tbody = document.getElementById('bonusTableBody');
+          tbody.innerHTML = '';
+          bonusData.forEach((item, index) => {
+            tbody.innerHTML += `
+              <tr>
+                <td>${index + 1}</td>
+                <td>${item.employee_id}</td>
+                <td>${item.name}</td>
+                <td>${new Date().getFullYear()}</td>
+                <td>${item.total_score}</td>
+                <td>${item.bonus}</td>
+              </tr>
+            `;
+          });
+        } catch (err) {
+          console.error(err);
+          alert('Gagal menghitung bonus');
+        }
+      });
+
+      document.getElementById('exportExcelBtn').addEventListener('click', () => {
+        alert('Fitur export Excel belum diimplementasikan.');
+      });
+
+      // ---------------------------------------------------------------------------------
+      // INPUT KPI (POST /api/kpis)
+      // ---------------------------------------------------------------------------------
+      document.getElementById('inputKPIForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const kpiCategory = document.getElementById('kpiCategory').value;
+        const kpiTitle = document.getElementById('kpiTitle').value;
+        const kpiWeight = document.getElementById('kpiWeight').value;
+        const kpiTarget = document.getElementById('kpiTarget').value;
+        // Ambil 5 skala (poor, fair, good, outstanding, exceptional)
+        const scaleInputs = document.querySelectorAll('#inputKPIPage .row input');
+        const scales = Array.from(scaleInputs).map(input => input.value);
+
+        // Format description (string) agar nanti bisa di-parse
+        // Contoh format:
+        //   "Kategori: Individu, Bobot: 10%, Target: 100 Juta, Skala: poor 1, fair 2, good 3, outstanding 4, exceptional 5"
+        const description = `Kategori: ${kpiCategory}, Bobot: ${kpiWeight}%, Target: ${kpiTarget}, Skala: poor ${scales[0]}, fair ${scales[1]}, good ${scales[2]}, outstanding ${scales[3]}, exceptional ${scales[4]}`;
+
+        try {
+          await axios.post('http://localhost:8080/api/kpis', {
+            title: kpiTitle,
+            description: description,
+            score: 0,
+            validated: false
+          }, {
+            headers: { Authorization: 'Bearer ' + token }
+          });
+          alert('KPI berhasil disimpan!');
+          e.target.reset();
+        } catch (err) {
+          console.error(err);
+          alert('Gagal menyimpan KPI');
+        }
+      });
+
+      // ---------------------------------------------------------------------------------
+      // FUNGSI PARSE DESCRIPTION
+      // ---------------------------------------------------------------------------------
+      // Memecah string description menjadi object { category, bobot, target, poor, fair, good, outstanding, exceptional }
+      function parseDescription(desc) {
+        if (!desc || typeof desc !== "string") {
+          return {
+            category: "",
+            bobot: "",
+            target: "",
+            poor: "",
+            fair: "",
+            good: "",
+            outstanding: "",
+            exceptional: ""
+          };
+        }
+
+        let category = "";
+        let bobot = "";
+        let target = "";
+        let poor = "";
+        let fair = "";
+        let good = "";
+        let outstanding = "";
+        let exceptional = "";
+
+        // Bagi berdasarkan koma
+        const parts = desc.split(",");
+
+        parts.forEach(part => {
+          const trimmed = part.trim();
+          if (trimmed.startsWith("Kategori:")) {
+            category = trimmed.replace("Kategori:", "").trim();
+          } else if (trimmed.startsWith("Bobot:")) {
+            bobot = trimmed.replace("Bobot:", "").trim();
+          } else if (trimmed.startsWith("Target:")) {
+            target = trimmed.replace("Target:", "").trim();
+          } else if (trimmed.startsWith("Skala:")) {
+            // "Skala: poor 1"
+            const skalaPart = trimmed.replace("Skala:", "").trim();
+            if (skalaPart.startsWith("poor")) {
+              poor = skalaPart.replace("poor", "").trim();
+            }
+            // Sisanya (fair, good, dsb.) akan tertangkap di else-if berikut
+          } else if (trimmed.startsWith("poor")) {
+            poor = trimmed.replace("poor", "").trim();
+          } else if (trimmed.startsWith("fair")) {
+            fair = trimmed.replace("fair", "").trim();
+          } else if (trimmed.startsWith("good")) {
+            good = trimmed.replace("good", "").trim();
+          } else if (trimmed.startsWith("outstanding")) {
+            outstanding = trimmed.replace("outstanding", "").trim();
+          } else if (trimmed.startsWith("exceptional")) {
+            exceptional = trimmed.replace("exceptional", "").trim();
+          }
+        });
+
+        return {
+          category,
+          bobot,
+          target,
+          poor,
+          fair,
+          good,
+          outstanding,
+          exceptional
+        };
+      }
+
+      // ---------------------------------------------------------------------------------
+      // MASTER KPI (GET /api/kpis, PUT, DELETE)
+      // ---------------------------------------------------------------------------------
+      async function loadKPIs() {
+        try {
+          const res = await axios.get('http://localhost:8080/api/kpis', {
+            headers: { Authorization: 'Bearer ' + token }
+          });
+          const kpis = res.data.data;
+          const tbody = document.getElementById('kpiTableBody');
+          tbody.innerHTML = '';
+
+          kpis.forEach(kpi => {
+            // Parse description jadi object
+            const descObj = parseDescription(kpi.description);
+
+            tbody.innerHTML += `
+              <tr>
+                <td>${kpi.ID}</td>
+                <td>${kpi.title}</td>
+                <td>${descObj.category}</td>
+                <td>${descObj.bobot}</td>
+                <td>${descObj.target}</td>
+                <td>${descObj.poor}</td>
+                <td>${descObj.fair}</td>
+                <td>${descObj.good}</td>
+                <td>${descObj.outstanding}</td>
+                <td>${descObj.exceptional}</td>
+                <td>${kpi.score}</td>
+                <td>${kpi.validated}</td>
+                <td>
+                  <button class="btn btn-sm btn-warning me-1" onclick="editKPI(${kpi.ID})">Edit</button>
+                  <button class="btn btn-sm btn-danger" onclick="deleteKPI(${kpi.ID})">Hapus</button>
+                </td>
+              </tr>
+            `;
+          });
+        } catch (err) {
+          console.error(err);
+          alert('Gagal memuat KPI');
+        }
+      }
+      document.getElementById('loadKPIBtn').addEventListener('click', loadKPIs);
+
+      async function editKPI(kpiId) {
+        const newTitle = prompt('Masukkan judul KPI baru:');
+        if (!newTitle) return;
+        try {
+          await axios.put(`http://localhost:8080/api/kpis/${kpiId}`, {
+            title: newTitle
+          }, {
+            headers: { Authorization: 'Bearer ' + token }
+          });
+          alert('KPI berhasil diupdate!');
+          loadKPIs();
+        } catch (err) {
+          console.error(err);
+          alert('Gagal update KPI');
+        }
+      }
+
+      async function deleteKPI(kpiId) {
+        if (!confirm('Yakin hapus KPI ini?')) return;
+        try {
+          await axios.delete(`http://localhost:8080/api/kpis/${kpiId}`, {
+            headers: { Authorization: 'Bearer ' + token }
+          });
+          alert('KPI berhasil dihapus!');
+          loadKPIs();
+        } catch (err) {
+          console.error(err);
+          alert('Gagal menghapus KPI');
+        }
+      }
+      window.editKPI = editKPI;
+      window.deleteKPI = deleteKPI;
+
+      // ---------------------------------------------------------------------------------
+      // INPUT PENILAIAN KPI: load data Employee & KPI
+      // ---------------------------------------------------------------------------------
+      const selectEmployee = document.getElementById('selectEmployee');
+      const selectKPI = document.getElementById('selectKPI');
+
+      async function loadEmployeesAndKPI() {
+        try {
+          // Muat data Employee
+          const empRes = await axios.get('http://localhost:8080/api/employees', {
+            headers: { Authorization: 'Bearer ' + token }
+          });
+          const employees = empRes.data.data;
+          selectEmployee.innerHTML = '<option value="">- Pilih -</option>';
+          employees.forEach(emp => {
+            const option = document.createElement('option');
+            option.value = emp.ID;
+            option.textContent = emp.Name;
+            selectEmployee.appendChild(option);
+          });
+
+          // Muat data KPI
+          const kpiRes = await axios.get('http://localhost:8080/api/kpis', {
+            headers: { Authorization: 'Bearer ' + token }
+          });
+          const kpis = kpiRes.data.data;
+          selectKPI.innerHTML = '<option value="">- Pilih -</option>';
+          kpis.forEach(kpi => {
+            const option = document.createElement('option');
+            option.value = kpi.ID;
+            option.textContent = kpi.title;
+            selectKPI.appendChild(option);
+          });
+        } catch (err) {
+          console.error(err);
+          alert('Gagal memuat data karyawan atau KPI');
+        }
+      }
+
+      // Panggil loadEmployeesAndKPI() saat user klik menu "Input Penilaian KPI"
+      document.querySelector('[data-page="inputPenilaianPage"]')
+        .addEventListener('click', () => {
+          loadEmployeesAndKPI();
+        });
+
+      // Submit form penilaian KPI (contoh)
+      document.getElementById('penilaianKPIForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+          const employeeId = document.getElementById('selectEmployee').value;
+          const kpiId = document.getElementById('selectKPI').value;
+          const achievement = document.getElementById('achievementField').value;
+
+          // Contoh: POST ke /api/kpi_evaluations
+          // Pastikan di sisi server sudah disiapkan
+          await axios.post('http://localhost:8080/api/kpi_evaluations',
+            {
+              employee_id: parseInt(employeeId),
+              kpi_id: parseInt(kpiId),
+              achievement: achievement
+            },
+            {
+              headers: { Authorization: 'Bearer ' + token }
+            }
+          );
+
+          alert('Penilaian KPI berhasil disimpan!');
+          e.target.reset();
+        } catch (err) {
+          console.error(err);
+          alert('Gagal menyimpan penilaian KPI');
+        }
+      });
+
+      // ---------------------------------------------------------------------------------
+      // KONDITE FORM
+      // ---------------------------------------------------------------------------------
+      document.getElementById('konditeForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert('Fitur input kondite belum diimplementasikan di sisi server.');
+      });
+    </script>
+  </body>
+</html>
