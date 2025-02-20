@@ -28,14 +28,14 @@ func main() {
 	}))
 
 	// Koneksi ke DB MySQL
-	dsn := "root@tcp(127.0.0.1:3306)/order_bonus_api?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := "root@tcp(127.0.0.1:3306)/bonus_db?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Gagal koneksi ke database: ", err)
 	}
 
 	// Migrasi model
-	db.AutoMigrate(&models.Employee{}, &models.KPI{}, &models.Criterion{}, &models.Evaluation{}, &models.KPIEvaluation{},)
+	db.AutoMigrate(&models.Employee{}, &models.KPI{}, &models.Criterion{}, &models.Evaluation{}, &models.KPIEvaluation{})
 
 	// Set DB di controllers
 	controllers.SetDB(db)

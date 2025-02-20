@@ -24,6 +24,7 @@ func CreateEmployee(c *gin.Context) {
 	var input struct {
 		Name     string `json:"name" binding:"required"`
 		Email    string `json:"email" binding:"required,email"`
+		Gaji     int64  `json:"gaji" binding:"required,gaji"`
 		Password string `json:"password" binding:"required"`
 		Role     string `json:"role" binding:"required"` // Contoh: "admin", "HRD", "manajer", "pegawai"
 	}
@@ -43,6 +44,7 @@ func CreateEmployee(c *gin.Context) {
 	employee := models.Employee{
 		Name:     input.Name,
 		Email:    input.Email,
+		Gaji:     input.Gaji,
 		Password: string(hashedPassword),
 		Role:     input.Role,
 	}
