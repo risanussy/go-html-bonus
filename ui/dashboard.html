@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -15,14 +15,13 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
     />
     <style>
-      /* Layout styling */
       body, html {
         height: 100%;
         margin: 0;
         padding: 0;
       }
       .sidebar {
-        background-color: #0d6efd; /* Biru ala Bootstrap */
+        background-color: #0d6efd; /* warna biru bootstrap */
         color: #fff;
         height: 100vh;
         padding: 20px;
@@ -57,21 +56,25 @@
     <div class="row g-0">
       <!-- SIDEBAR -->
       <div class="col-2 sidebar d-flex flex-column">
-       
+        <h5 class="fw-bold text-center">AHP APP</h5>
         <div
           class="w-50 mt-3 rounded overflow-hidden"
           style="margin: auto; height: 150px;"
         >
+          <!-- Foto (mis. from unimdra / user) -->
           <img
-            src="unindra.jpeg"
+            src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=1974&auto=format&fit=crop"
             class="w-100"
-            style="transform: translateY(-5px);"
-            alt="unindra.jpeg"
+            style="transform: translateY(-30px);"
+            alt="User Image"
           />
         </div>
-        <h6 class="text-center fw-bold mt-3">Nama Karyawan</h6>
+        <!-- Data user (contoh) -->
+        <h6 class="text-center fw-bold mt-3">Persone One</h6>
         <small class="text-center d-block">16022025</small>
         <hr class="my-3" />
+
+        <!-- Menu -->
         <div id="menuList" class="flex-grow-1">
           <a href="#" data-page="bonusPage" class="menu-link"
             ><i class="bi bi-coin me-2"></i>Halaman Bonus</a
@@ -92,10 +95,6 @@
           >
           <hr class="text-white" />
           <small>Master</small>
-          <!-- Ubah nama menu KPI jadi EYN atau tetap KPI -->
-          <a href="#" data-page="masterKPIPage" class="menu-link"
-            ><i class="bi bi-card-checklist me-2"></i>KPI</a
-          >
           <a href="#" data-page="masterPengurangPage" class="menu-link"
             ><i class="bi bi-file-earmark-minus me-2"></i>Pengurang Poin</a
           >
@@ -104,6 +103,12 @@
           >
           <a href="#" data-page="masterSettingKPIPage" class="menu-link"
             ><i class="bi bi-gear-fill me-2"></i>Setting KPI</a
+          >
+          <a href="#" data-page="masterKPIPage" class="menu-link"
+            ><i class="bi bi-card-checklist me-2"></i>KPI</a
+          >
+          <a href="#" data-page="employeePage" class="menu-link"
+            ><i class="bi bi-people-fill me-2"></i>Data Karyawan</a
           >
         </div>
         <button id="logoutBtn" class="btn btn-outline-light w-100 mt-3">
@@ -116,13 +121,9 @@
         <!-- Halaman Bonus -->
         <div id="bonusPage" class="page">
           <h3>Halaman Bonus</h3>
-          <p>Di sini Anda dapat melihat akumulasi bonus dan mengekspor ke Excel.</p>
-          <button class="btn btn-success mb-3" id="exportExcelBtn">
-            Export Excel
-          </button>
-          <button class="btn btn-primary mb-3" id="calculateBonusBtn">
-            Hitung Bonus
-          </button>
+          <p>Di sini Anda dapat melihat akumulasi bonus (skor KPI dsb.).</p>
+          <button class="btn btn-success mb-3" id="exportExcelBtn">Export Excel</button>
+          <button class="btn btn-primary mb-3" id="calculateBonusBtn">Hitung Bonus</button>
           <div class="table-responsive">
             <table class="table table-bordered">
               <thead class="table-light">
@@ -140,53 +141,84 @@
           </div>
         </div>
 
-        <!-- Halaman Kondite -->
+        <!-- Halaman Kondite (Pengurang Poin) -->
         <div id="konditePage" class="page">
           <h3>Kondite</h3>
-          <p>Form input kondite karyawan (misal: Surat Peringatan).</p>
+          <p>Form untuk input data kondite (pengurang poin) karyawan.</p>
           <form id="konditeForm">
             <div class="mb-3">
               <label class="form-label">Nama Karyawan</label>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Misal: Anggi"
-                required
-              />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Kategori Kondite</label>
-              <select class="form-select" required>
+              <select class="form-select" id="konditeEmployeeSelect" required>
                 <option value="">- Pilih -</option>
-                <option value="SP1">Surat Peringatan 1</option>
-                <option value="SP2">Surat Peringatan 2</option>
-                <option value="SP3">Surat Peringatan 3</option>
+                <!-- Muncul dari GET /api/employees -->
               </select>
             </div>
             <div class="mb-3">
-              <label class="form-label">Masa Berlaku</label>
-              <input type="date" class="form-control" required />
+              <label class="form-label">Kategori Kondite</label>
+              <select class="form-select" id="konditeCategorySelect" required>
+                <option value="">- Pilih -</option>
+                <!-- Contoh: SP1 (1.25), SP2 (1.5), SP3 (2), dsb. -->
+                <option value="SP1">Surat Peringatan 1 (1.25)</option>
+                <option value="SP2">Surat Peringatan 2 (1.5)</option>
+                <option value="SP3">Surat Peringatan 3 (2)</option>
+                <!-- Bisa tambahkan kategori lain sesuai keperluan -->
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Masa Berlaku (Awal)</label>
+              <input type="date" class="form-control" id="konditeStart" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Masa Berlaku (Akhir)</label>
+              <input type="date" class="form-control" id="konditeEnd" required />
             </div>
             <button class="btn btn-primary" type="submit">Simpan Kondite</button>
           </form>
+          <hr />
+          <h5>List Kondite</h5>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Karyawan</th>
+                  <th>Kategori</th>
+                  <th>Periode</th>
+                </tr>
+              </thead>
+              <tbody id="konditeTableBody"></tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Halaman Kalibrasi -->
         <div id="kalibrasiPage" class="page">
           <h3>Kalibrasi</h3>
           <p>
-            Menampilkan nilai KPI yang telah disesuaikan dengan pengurang dan
-            penambah poin. Hasil akhir akan dikategorikan:
-            <br />
-            &lt;2 = Poor, 2 - &lt;3 = Fair, 3 - &lt;4 = Good, 4 - &lt;5 =
-            Outstanding, 5 = Exceptional.
+            Menampilkan nilai akhir (KPI) yang sudah ditambah penambah poin & dikurangi kondite.
           </p>
+          <button class="btn btn-success mb-3" id="loadKalibrasiBtn">Muat Data Kalibrasi</button>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th>ID Karyawan</th>
+                  <th>Nama</th>
+                  <th>KPI Score</th>
+                  <th>Pengurang Poin</th>
+                  <th>Penambah Poin</th>
+                  <th>Hasil Kalibrasi</th>
+                </tr>
+              </thead>
+              <tbody id="kalibrasiTableBody"></tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Halaman Input KPI -->
         <div id="inputKPIPage" class="page">
           <h3>Input KPI</h3>
-          <p>Tambah kategori KPI, bobot, target, dan skala penilaian.</p>
+          <p>Tambah data KPI. (Kategori: Individu/Departemen/Perusahaan, dsb.)</p>
           <form id="inputKPIForm">
             <div class="mb-3">
               <label class="form-label">Kategori KPI</label>
@@ -285,22 +317,49 @@
           </form>
         </div>
 
-        <!-- Halaman Master Pengurang Poin -->
+        <!-- Halaman Master Pengurang Poin (Mirip Kondite) -->
         <div id="masterPengurangPage" class="page">
           <h3>Master Pengurang Poin</h3>
-          <p>Contoh: SP1 (1.25), SP2 (1.5), SP3 (2), dll.</p>
+          <p>Contoh: SP1 (1.25), SP2 (1.5), SP3 (2), dsb. (Dikelola admin.)</p>
+          <!-- Tampilkan tabel data pengurang poin yang ada -->
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nama/Kategori</th>
+                  <th>Bobot Poin</th>
+                </tr>
+              </thead>
+              <tbody id="pengurangTableBody"></tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Halaman Master Penambah Poin -->
         <div id="masterPenambahPage" class="page">
           <h3>Master Penambah Poin</h3>
           <p>Contoh: Penghargaan BOD (0.25), Project di luar KPI (0.15), dsb.</p>
+          <!-- Tabel data penambah poin -->
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nama/Kategori</th>
+                  <th>Bobot Poin</th>
+                </tr>
+              </thead>
+              <tbody id="penambahTableBody"></tbody>
+            </table>
+          </div>
         </div>
 
         <!-- Halaman Master Setting KPI -->
         <div id="masterSettingKPIPage" class="page">
-          <h3>Master Setting KPI</h3>
-          <p>KPI Individu, KPI Departemen, KPI Perusahaan harus total 100%.</p>
+          <h3>Setting KPI</h3>
+          <p>KPI Individu, Departemen, Perusahaan harus total 100%.</p>
+          <!-- Form / tabel setting bisa diletakkan di sini -->
         </div>
 
         <!-- Halaman Master KPI -->
@@ -314,22 +373,86 @@
                 <tr>
                   <th>ID</th>
                   <th>Title</th>
-                  <!-- Kolom2 hasil parsing description -->
-                  <th>Category</th>
-                  <th>Bobot</th>
-                  <th>Target</th>
-                  <th>Poor</th>
-                  <th>Fair</th>
-                  <th>Good</th>
-                  <th>Outstanding</th>
-                  <th>Exceptional</th>
-                  <!-- Kolom existing -->
+                  <th>Description</th>
                   <th>Score</th>
                   <th>Validated</th>
                   <th>Aksi</th>
                 </tr>
               </thead>
               <tbody id="kpiTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Halaman Input Data Karyawan -->
+        <div id="employeePage" class="page">
+          <h3>Data Karyawan</h3>
+          <p>Form input data karyawan (nama, email, gaji, dsb.).</p>
+          <form id="employeeForm">
+            <div class="mb-3">
+              <label class="form-label">Nama</label>
+              <input
+                type="text"
+                class="form-control"
+                id="employeeName"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input
+                type="email"
+                class="form-control"
+                id="employeeEmail"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="employeePassword"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Gaji</label>
+              <input
+                type="number"
+                class="form-control"
+                id="employeeSalary"
+                placeholder="Contoh: 5000000"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Role</label>
+              <select class="form-select" id="employeeRole" required>
+                <option value="">- Pilih -</option>
+                <option value="admin">Admin</option>
+                <option value="HRD">HRD</option>
+                <option value="manager">Manager</option>
+                <option value="pegawai">Pegawai</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" type="submit">Simpan Karyawan</button>
+          </form>
+          <hr />
+          <h5>List Karyawan</h5>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead class="table-light">
+                <tr>
+                  <th>ID</th>
+                  <th>Nama</th>
+                  <th>Email</th>
+                  <th>Gaji</th>
+                  <th>Role</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="employeeTableBody"></tbody>
             </table>
           </div>
         </div>
@@ -342,29 +465,23 @@
     ></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-      // Pastikan user sudah login
+      // ---------------------------
+      // Checking JWT & basic setup
+      // ---------------------------
       const token = localStorage.getItem('token');
       if (!token) {
         window.location.href = 'index.html';
       }
 
-      // Logout
-      document.getElementById('logoutBtn').addEventListener('click', () => {
-        localStorage.removeItem('token');
-        window.location.href = 'index.html';
-      });
-
-      // Menu navigation
       const menuLinks = document.querySelectorAll('.menu-link');
       const pages = document.querySelectorAll('.page');
-      menuLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          // Hapus active-menu dari semua link
-          menuLinks.forEach(lnk => lnk.classList.remove('active-menu'));
-          // Tambah active-menu ke link yang diklik
-          link.classList.add('active-menu');
 
+      // Sidebar navigation
+      menuLinks.forEach(link => {
+        link.addEventListener('click', e => {
+          e.preventDefault();
+          menuLinks.forEach(lnk => lnk.classList.remove('active-menu'));
+          link.classList.add('active-menu');
           const pageId = link.getAttribute('data-page');
           pages.forEach(pg => {
             pg.classList.remove('active');
@@ -372,17 +489,21 @@
           });
         });
       });
-      // Tampilkan halaman Bonus sebagai default
+      // Default open Halaman Bonus
       document.querySelector('[data-page="bonusPage"]').click();
 
-      // ---------------------------------------------------------------------------------
-      // BONUS
-      // ---------------------------------------------------------------------------------
+      // Logout
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        localStorage.removeItem('token');
+        window.location.href = 'index.html';
+      });
+
+      // ------------------------------------------------
+      // HALAMAN BONUS (contoh perhitungan bonus existing)
+      // ------------------------------------------------
       document.getElementById('calculateBonusBtn').addEventListener('click', async () => {
         try {
-          const payload = {
-            criteria_weights: { "KPI": 1 } // contoh bobot
-          };
+          const payload = { criteria_weights: { "KPI": 1 } };
           const res = await axios.post('http://localhost:8080/api/bonus/calculate', payload, {
             headers: { Authorization: 'Bearer ' + token }
           });
@@ -411,22 +532,82 @@
         alert('Fitur export Excel belum diimplementasikan.');
       });
 
-      // ---------------------------------------------------------------------------------
-      // INPUT KPI (POST /api/kpis)
-      // ---------------------------------------------------------------------------------
-      document.getElementById('inputKPIForm').addEventListener('submit', async (e) => {
+      // ------------------------------------------------
+      // HALAMAN KONDATE (Pengurang Poin) - placeholder
+      // ------------------------------------------------
+      const konditeForm = document.getElementById('konditeForm');
+      const konditeEmployeeSelect = document.getElementById('konditeEmployeeSelect');
+      const konditeTableBody = document.getElementById('konditeTableBody');
+
+      // Load employee data for Kondite select
+      async function loadKonditeEmployees() {
+        try {
+          const res = await axios.get('http://localhost:8080/api/employees', {
+            headers: { Authorization: 'Bearer ' + token }
+          });
+          const employees = res.data.data;
+          konditeEmployeeSelect.innerHTML = '<option value="">- Pilih -</option>';
+          employees.forEach(emp => {
+            const option = document.createElement('option');
+            option.value = emp.ID;
+            option.textContent = emp.Name;
+            konditeEmployeeSelect.appendChild(option);
+          });
+        } catch (err) {
+          console.error(err);
+          alert('Gagal memuat karyawan untuk Kondite');
+        }
+      }
+
+      async function loadKonditeList() {
+        // Placeholder GET /api/kondites
+        // Tampilkan data di #konditeTableBody
+        konditeTableBody.innerHTML = `
+          <tr><td colspan="4" class="text-center">Belum ada data kondite (contoh placeholder)</td></tr>
+        `;
+      }
+
+      document.querySelector('[data-page="konditePage"]').addEventListener('click', () => {
+        loadKonditeEmployees();
+        loadKonditeList();
+      });
+
+      konditeForm.addEventListener('submit', e => {
+        e.preventDefault();
+        alert('Fitur simpan kondite belum diimplementasikan di server (placeholder).');
+      });
+
+      // ------------------------------------------------
+      // HALAMAN KALIBRASI - placeholder
+      // ------------------------------------------------
+      const kalibrasiTableBody = document.getElementById('kalibrasiTableBody');
+      document.getElementById('loadKalibrasiBtn').addEventListener('click', () => {
+        // Placeholder
+        kalibrasiTableBody.innerHTML = `
+          <tr>
+            <td>1</td>
+            <td>Persone One</td>
+            <td>80</td>
+            <td>1.25 (SP1)</td>
+            <td>0.25 (BOD)</td>
+            <td>78.5</td>
+          </tr>
+        `;
+      });
+
+      // ------------------------------------------------
+      // INPUT KPI
+      // ------------------------------------------------
+      document.getElementById('inputKPIForm').addEventListener('submit', async e => {
         e.preventDefault();
         const kpiCategory = document.getElementById('kpiCategory').value;
         const kpiTitle = document.getElementById('kpiTitle').value;
         const kpiWeight = document.getElementById('kpiWeight').value;
         const kpiTarget = document.getElementById('kpiTarget').value;
-        // Ambil 5 skala (poor, fair, good, outstanding, exceptional)
         const scaleInputs = document.querySelectorAll('#inputKPIPage .row input');
-        const scales = Array.from(scaleInputs).map(input => input.value);
+        const scales = Array.from(scaleInputs).map(inp => inp.value);
 
-        // Format description (string) agar nanti bisa di-parse
-        // Contoh format:
-        //   "Kategori: Individu, Bobot: 10%, Target: 100 Juta, Skala: poor 1, fair 2, good 3, outstanding 4, exceptional 5"
+        // Buat description
         const description = `Kategori: ${kpiCategory}, Bobot: ${kpiWeight}%, Target: ${kpiTarget}, Skala: poor ${scales[0]}, fair ${scales[1]}, good ${scales[2]}, outstanding ${scales[3]}, exceptional ${scales[4]}`;
 
         try {
@@ -446,162 +627,16 @@
         }
       });
 
-      // ---------------------------------------------------------------------------------
-      // FUNGSI PARSE DESCRIPTION
-      // ---------------------------------------------------------------------------------
-      // Memecah string description menjadi object { category, bobot, target, poor, fair, good, outstanding, exceptional }
-      function parseDescription(desc) {
-        if (!desc || typeof desc !== "string") {
-          return {
-            category: "",
-            bobot: "",
-            target: "",
-            poor: "",
-            fair: "",
-            good: "",
-            outstanding: "",
-            exceptional: ""
-          };
-        }
-
-        let category = "";
-        let bobot = "";
-        let target = "";
-        let poor = "";
-        let fair = "";
-        let good = "";
-        let outstanding = "";
-        let exceptional = "";
-
-        // Bagi berdasarkan koma
-        const parts = desc.split(",");
-
-        parts.forEach(part => {
-          const trimmed = part.trim();
-          if (trimmed.startsWith("Kategori:")) {
-            category = trimmed.replace("Kategori:", "").trim();
-          } else if (trimmed.startsWith("Bobot:")) {
-            bobot = trimmed.replace("Bobot:", "").trim();
-          } else if (trimmed.startsWith("Target:")) {
-            target = trimmed.replace("Target:", "").trim();
-          } else if (trimmed.startsWith("Skala:")) {
-            // "Skala: poor 1"
-            const skalaPart = trimmed.replace("Skala:", "").trim();
-            if (skalaPart.startsWith("poor")) {
-              poor = skalaPart.replace("poor", "").trim();
-            }
-            // Sisanya (fair, good, dsb.) akan tertangkap di else-if berikut
-          } else if (trimmed.startsWith("poor")) {
-            poor = trimmed.replace("poor", "").trim();
-          } else if (trimmed.startsWith("fair")) {
-            fair = trimmed.replace("fair", "").trim();
-          } else if (trimmed.startsWith("good")) {
-            good = trimmed.replace("good", "").trim();
-          } else if (trimmed.startsWith("outstanding")) {
-            outstanding = trimmed.replace("outstanding", "").trim();
-          } else if (trimmed.startsWith("exceptional")) {
-            exceptional = trimmed.replace("exceptional", "").trim();
-          }
-        });
-
-        return {
-          category,
-          bobot,
-          target,
-          poor,
-          fair,
-          good,
-          outstanding,
-          exceptional
-        };
-      }
-
-      // ---------------------------------------------------------------------------------
-      // MASTER KPI (GET /api/kpis, PUT, DELETE)
-      // ---------------------------------------------------------------------------------
-      async function loadKPIs() {
-        try {
-          const res = await axios.get('http://localhost:8080/api/kpis', {
-            headers: { Authorization: 'Bearer ' + token }
-          });
-          const kpis = res.data.data;
-          const tbody = document.getElementById('kpiTableBody');
-          tbody.innerHTML = '';
-
-          kpis.forEach(kpi => {
-            // Parse description jadi object
-            const descObj = parseDescription(kpi.description);
-
-            tbody.innerHTML += `
-              <tr>
-                <td>${kpi.ID}</td>
-                <td>${kpi.title}</td>
-                <td>${descObj.category}</td>
-                <td>${descObj.bobot}</td>
-                <td>${descObj.target}</td>
-                <td>${descObj.poor}</td>
-                <td>${descObj.fair}</td>
-                <td>${descObj.good}</td>
-                <td>${descObj.outstanding}</td>
-                <td>${descObj.exceptional}</td>
-                <td>${kpi.score}</td>
-                <td>${kpi.validated}</td>
-                <td>
-                  <button class="btn btn-sm btn-warning me-1" onclick="editKPI(${kpi.ID})">Edit</button>
-                  <button class="btn btn-sm btn-danger" onclick="deleteKPI(${kpi.ID})">Hapus</button>
-                </td>
-              </tr>
-            `;
-          });
-        } catch (err) {
-          console.error(err);
-          alert('Gagal memuat KPI');
-        }
-      }
-      document.getElementById('loadKPIBtn').addEventListener('click', loadKPIs);
-
-      async function editKPI(kpiId) {
-        const newTitle = prompt('Masukkan judul KPI baru:');
-        if (!newTitle) return;
-        try {
-          await axios.put(`http://localhost:8080/api/kpis/${kpiId}`, {
-            title: newTitle
-          }, {
-            headers: { Authorization: 'Bearer ' + token }
-          });
-          alert('KPI berhasil diupdate!');
-          loadKPIs();
-        } catch (err) {
-          console.error(err);
-          alert('Gagal update KPI');
-        }
-      }
-
-      async function deleteKPI(kpiId) {
-        if (!confirm('Yakin hapus KPI ini?')) return;
-        try {
-          await axios.delete(`http://localhost:8080/api/kpis/${kpiId}`, {
-            headers: { Authorization: 'Bearer ' + token }
-          });
-          alert('KPI berhasil dihapus!');
-          loadKPIs();
-        } catch (err) {
-          console.error(err);
-          alert('Gagal menghapus KPI');
-        }
-      }
-      window.editKPI = editKPI;
-      window.deleteKPI = deleteKPI;
-
-      // ---------------------------------------------------------------------------------
-      // INPUT PENILAIAN KPI: load data Employee & KPI
-      // ---------------------------------------------------------------------------------
+      // ------------------------------------------------
+      // INPUT PENILAIAN KPI
+      // ------------------------------------------------
+      const penilaianKPIForm = document.getElementById('penilaianKPIForm');
       const selectEmployee = document.getElementById('selectEmployee');
       const selectKPI = document.getElementById('selectKPI');
 
       async function loadEmployeesAndKPI() {
+        // GET employees
         try {
-          // Muat data Employee
           const empRes = await axios.get('http://localhost:8080/api/employees', {
             headers: { Authorization: 'Bearer ' + token }
           });
@@ -614,7 +649,7 @@
             selectEmployee.appendChild(option);
           });
 
-          // Muat data KPI
+          // GET kpis
           const kpiRes = await axios.get('http://localhost:8080/api/kpis', {
             headers: { Authorization: 'Bearer ' + token }
           });
@@ -628,27 +663,25 @@
           });
         } catch (err) {
           console.error(err);
-          alert('Gagal memuat data karyawan atau KPI');
+          alert('Gagal memuat data karyawan / KPI');
         }
       }
 
-      // Panggil loadEmployeesAndKPI() saat user klik menu "Input Penilaian KPI"
-      document.querySelector('[data-page="inputPenilaianPage"]')
+      document
+        .querySelector('[data-page="inputPenilaianPage"]')
         .addEventListener('click', () => {
           loadEmployeesAndKPI();
         });
 
-      // Submit form penilaian KPI (contoh)
-      document.getElementById('penilaianKPIForm').addEventListener('submit', async (e) => {
+      penilaianKPIForm.addEventListener('submit', async e => {
         e.preventDefault();
         try {
-          const employeeId = document.getElementById('selectEmployee').value;
-          const kpiId = document.getElementById('selectKPI').value;
+          const employeeId = selectEmployee.value;
+          const kpiId = selectKPI.value;
           const achievement = document.getElementById('achievementField').value;
-
-          // Contoh: POST ke /api/kpi_evaluations
-          // Pastikan di sisi server sudah disiapkan
-          await axios.post('http://localhost:8080/api/kpi_evaluations',
+          // Contoh POST /api/kpi_evaluations (harus ada di server)
+          await axios.post(
+            'http://localhost:8080/api/kpi_evaluations',
             {
               employee_id: parseInt(employeeId),
               kpi_id: parseInt(kpiId),
@@ -658,7 +691,6 @@
               headers: { Authorization: 'Bearer ' + token }
             }
           );
-
           alert('Penilaian KPI berhasil disimpan!');
           e.target.reset();
         } catch (err) {
@@ -667,13 +699,162 @@
         }
       });
 
-      // ---------------------------------------------------------------------------------
-      // KONDITE FORM
-      // ---------------------------------------------------------------------------------
-      document.getElementById('konditeForm').addEventListener('submit', (e) => {
+      // ------------------------------------------------
+      // MASTER KPI
+      // ------------------------------------------------
+      async function loadKPIs() {
+        try {
+          const res = await axios.get('http://localhost:8080/api/kpis', {
+            headers: { Authorization: 'Bearer ' + token }
+          });
+          const kpis = res.data.data;
+          const tbody = document.getElementById('kpiTableBody');
+          tbody.innerHTML = '';
+          kpis.forEach(k => {
+            tbody.innerHTML += `
+              <tr>
+                <td>${k.ID}</td>
+                <td>${k.title}</td>
+                <td>${k.description}</td>
+                <td>${k.score}</td>
+                <td>${k.validated}</td>
+                <td>
+                  <button class="btn btn-sm btn-warning me-1" onclick="editKPI(${k.ID})">Edit</button>
+                  <button class="btn btn-sm btn-danger" onclick="deleteKPI(${k.ID})">Hapus</button>
+                </td>
+              </tr>
+            `;
+          });
+        } catch (err) {
+          console.error(err);
+          alert('Gagal load KPI');
+        }
+      }
+      document.getElementById('loadKPIBtn').addEventListener('click', loadKPIs);
+
+      window.editKPI = async function (kpiId) {
+        const newTitle = prompt('Masukkan judul KPI baru:');
+        if (!newTitle) return;
+        try {
+          await axios.put(`http://localhost:8080/api/kpis/${kpiId}`,
+            { title: newTitle },
+            { headers: { Authorization: 'Bearer ' + token } }
+          );
+          alert('KPI berhasil diupdate!');
+          loadKPIs();
+        } catch (err) {
+          console.error(err);
+          alert('Gagal update KPI');
+        }
+      };
+
+      window.deleteKPI = async function (kpiId) {
+        if (!confirm('Yakin hapus KPI ini?')) return;
+        try {
+          await axios.delete(`http://localhost:8080/api/kpis/${kpiId}`, {
+            headers: { Authorization: 'Bearer ' + token }
+          });
+          alert('KPI berhasil dihapus!');
+          loadKPIs();
+        } catch (err) {
+          console.error(err);
+          alert('Gagal menghapus KPI');
+        }
+      };
+
+      // ------------------------------------------------
+      // DATA KARYAWAN
+      // ------------------------------------------------
+      const employeeForm = document.getElementById('employeeForm');
+      const employeeTableBody = document.getElementById('employeeTableBody');
+
+      async function loadEmployees() {
+        try {
+          const res = await axios.get('http://localhost:8080/api/employees', {
+            headers: { Authorization: 'Bearer ' + token }
+          });
+          const employees = res.data.data;
+          employeeTableBody.innerHTML = '';
+          employees.forEach(emp => {
+            employeeTableBody.innerHTML += `
+              <tr>
+                <td>${emp.ID}</td>
+                <td>${emp.Name}</td>
+                <td>${emp.Email}</td>
+                <td>${emp.Salary || '-'}</td>
+                <td>${emp.Role}</td>
+                <td>
+                  <button class="btn btn-sm btn-warning me-1" onclick="editEmployee(${emp.ID})">Edit</button>
+                  <button class="btn btn-sm btn-danger" onclick="deleteEmployee(${emp.ID})">Hapus</button>
+                </td>
+              </tr>
+            `;
+          });
+        } catch (err) {
+          console.error(err);
+          alert('Gagal memuat data karyawan');
+        }
+      }
+
+      // Saat klik menu Data Karyawan, load data
+      document
+        .querySelector('[data-page="employeePage"]')
+        .addEventListener('click', loadEmployees);
+
+      // Submit form karyawan
+      employeeForm.addEventListener('submit', async e => {
         e.preventDefault();
-        alert('Fitur input kondite belum diimplementasikan di sisi server.');
+        const name = document.getElementById('employeeName').value;
+        const email = document.getElementById('employeeEmail').value;
+        const pass = document.getElementById('employeePassword').value;
+        const salary = document.getElementById('employeeSalary').value;
+        const role = document.getElementById('employeeRole').value;
+
+        try {
+          await axios.post('http://localhost:8080/api/employees',
+            { name, email, password: pass, salary, role },
+            { headers: { Authorization: 'Bearer ' + token } }
+          );
+          alert('Karyawan berhasil disimpan!');
+          e.target.reset();
+          loadEmployees();
+        } catch (err) {
+          console.error(err);
+          alert('Gagal menyimpan karyawan');
+        }
       });
+
+      // Fungsi edit & delete employee
+      window.editEmployee = async function (empId) {
+        const newName = prompt('Nama karyawan baru?');
+        if (!newName) return;
+        // Di real, sebaiknya buat form edit lengkap.
+        try {
+          await axios.put(`http://localhost:8080/api/employees/${empId}`,
+            { name: newName },
+            { headers: { Authorization: 'Bearer ' + token } }
+          );
+          alert('Karyawan berhasil diupdate!');
+          loadEmployees();
+        } catch (err) {
+          console.error(err);
+          alert('Gagal update karyawan');
+        }
+      };
+
+      window.deleteEmployee = async function (empId) {
+        if (!confirm('Yakin hapus karyawan ini?')) return;
+        try {
+          await axios.delete(`http://localhost:8080/api/employees/${empId}`, {
+            headers: { Authorization: 'Bearer ' + token }
+          });
+          alert('Karyawan berhasil dihapus!');
+          loadEmployees();
+        } catch (err) {
+          console.error(err);
+          alert('Gagal menghapus karyawan');
+        }
+      };
     </script>
   </body>
 </html>
